@@ -97,6 +97,117 @@ A machine based on the Basic Computer architecture was created in CPU Sim and sa
 
 Now, we will move onto practical 2, in which there is creation of Fetch sequence, program counter and saving and after that our basic computer will be completed and we can save our machine as BasicComputer.cpu
 
+Practical 2: Create the Fetch Routine of the Instruction Cycle
+
+Aim-> To create the fetch (and decode) routine of the instruction cycle and observe it one microinstruction at a time. Tool-> CPU Sim 4.0.11 (Java 8 with JavaFX)
+
+
+Theory
+
+
+Every instruction cycle begins with the same fetch and decode phase. In Mano's Basic Computer it takes three clock pulses, controlled by the sequence counter outputs T0, T1 and T2
+
+
+T0 : AR <- PC T1 : IR <- M[AR], PC <- PC + 1 T2 : D0 ... D7 <- Decode IR(12-14), AR <- IR(0-11), I <- IR(15)
+
+Creating fetch sequence instructions:
+
+
+<img width="825" height="513" alt="Screenshot 2026-10-04 132654" src="https://github.com/user-attachments/assets/378cf684-1d2b-4c24-ae40-e269a72d076b" />
+
+
+Testing the routine:
+We have opened P03_ADD.a file in CPUSim and set the format of registers to unsigned Dec
+
+
+<img width="832" height="406" alt="image" src="https://github.com/user-attachments/assets/a7ec841c-062d-4d17-b4d7-37527e5f5146" />
+
+After clicking step by micro 5 times:
+
+
+<img width="857" height="422" alt="image" src="https://github.com/user-attachments/assets/43eb37f6-75bf-4f6c-bfae-3cacb39d4c38" />
+
+Result:
+
+
+Observations Table
+
+
+Micro-step	Microinstruction	AR	PC	IR
+
+
+start	--	0	0	0
+
+
+1	PC->AR	0	0	0
+
+
+2	M[AR]->IR	0	0	63488 (F800)
+
+
+3	PC+1->PC	0	1	63488
+
+
+4	IR(0-11)->AR	2048 (800)	1	63488
+
+
+5	decode-IR	2048	1	63488 -> INP
+
+
+The fetch routine PC->AR, M[AR]->IR, PC+1->PC, IR(0-11)->AR, decode-IR was created and verified by single-stepping the first instruction of a program.
+
+
+Practical 3: ADD Operation on Two User-entered Numbers
+
+
+Aim-> To write an assembly program that reads two numbers entered by the user, adds them and displays the sum. Tool-> CPU Sim 4.0.11 (Java 8 with JavaFX)
+
+
+Theory
+
+
+INP reads an integer into AC. STA A saves it in memory because the next INP overwrites AC. ADD A is a memory-reference instruction: DR ← M[A], then AC ← AC + DR and the carry out of bit 15 goes to E. OUT displays AC and HLT stops the machine. Numbers are 16-bit two's complement, so the range is −32768 to +32767
+
+
+programme
+
+
+; ==============================================================
+; Practical 3 : ADD operation on two user-entered numbers
+; Machine : BasicComputer.cpu (Mano's Basic Computer)
+; Logic : SUM = A + B
+; ==============================================================
+ INP ; AC <- first number typed by the user
+ STA A ; M[A] <- AC (save first number)
+ INP ; AC <- second number
+ ADD A ; AC <- AC + M[A], E <- carry out
+ STA SUM ; M[SUM] <- AC (save the result)
+ OUT ; display AC (the sum)
+ HLT ; stop
+A: .data 1 0 ; first number
+SUM: .data 1 0 ; result
+
+
+after assembling and loading
+
+
+<img width="942" height="601" alt="Screenshot 2026-10-04 133312" src="https://github.com/user-attachments/assets/e520b500-8863-44f8-a05f-babf2f60da6c" />
+
+
+after running
+
+
+<img width="708" height="551" alt="Screenshot 2026-10-04 133344" src="https://github.com/user-attachments/assets/f60355f6-2dec-495f-912b-b85025efcb2d" />
+
+<img width="742" height="238" alt="Screenshot 2026-10-04 133355" src="https://github.com/user-attachments/assets/2ffe7d04-2a78-4c47-a435-7e7d8b69d755" />
+
+
+
+Result
+
+
+The output is correct, program takes the input, stores the input, adds the numbers and displays the sum correctly.
+
 
 
 
