@@ -209,6 +209,179 @@ Result
 The output is correct, program takes the input, stores the input, adds the numbers and displays the sum correctly.
 
 
+Practical 4: SUBTRACT Operation on Two User-entered Numbers
+
+
+Aim-> To write an assembly program that reads two numbers A and B and displays A − B. Tool-> CPU Sim 4.0.11 (Java 8 with JavaFX)
+
+
+Theory
+
+
+The Basic Computer has no subtract instruction. Subtraction uses the two's complement: A − B = A + (B′ + 1). CMA forms the 1's complement B′ and INC adds 1, giving −B, which is then added to A with ADD.
+
+
+Program
+
+
+; ==============================================================
+; Practical 4 : SUBTRACT operation on two user-entered numbers
+; Machine : BasicComputer.cpu (Mano's Basic Computer)
+; Logic : DIFF = A - B = A + (2's complement of B)
+; 2's complement of B = B' + 1 (CMA, then INC)
+; ==============================================================
+ INP ; AC <- A (minuend)
+ STA A ; M[A] <- AC
+ INP ; AC <- B (subtrahend)
+ CMA ; AC <- AC' (1's complement of B)
+ INC ; AC <- AC + 1 (2's complement of B = -B)
+ ADD A ; AC <- A + (-B) = A - B
+ STA DIFF ; M[DIFF] <- AC
+ OUT ; display the difference
+ HLT
+A: .data 1 0 ; minuend
+DIFF: .data 1 0 ; result
+
+
+After assembling and loading the program
+
+
+<img width="850" height="477" alt="Screenshot 2026-10-04 133705" src="https://github.com/user-attachments/assets/a074c957-a053-4494-a10a-e194070be607" />
+
+
+Output after running the program and entering both numbers
+
+
+<img width="846" height="270" alt="Screenshot 2026-10-04 133757" src="https://github.com/user-attachments/assets/8ffd881e-5a3e-4056-8858-020019ad5ae6" />
+
+
+Result
+
+
+
+The output is correct, program takes the input, stores the input, subtracts the numbers using 2's complement method and displays the difference correctly.
+
+
+Practical 5: Logical Operations: AND, OR, NOT, XOR, NOR, NAND
+
+
+
+Aim To write an assembly program that performs AND, OR, NOT, XOR, NOR and NAND on two userentered numbers. Tool CPU Sim 4.0.11 (Java 8 with JavaFX)
+
+
+Theory
+
+
+The Basic Computer provides only two logic instructions: AND (memory-reference, AC ← AC ∧ M[addr]) and CMA (register-reference, AC ← AC′). Since {AND, NOT} is functionally complete, every other operation can be built from them with Boolean algebra, applied to all 16 bits at once:
+
+
+Operation	Boolean identity used	Instruction sequence
+
+
+A AND B	A·B	LDA A, AND B
+
+A OR B	(A′·B′)′ (De Morgan)	LDA B, CMA, STA NB, LDA A, CMA, AND NB, CMA
+
+NOT A	A′	LDA A, CMA
+
+A XOR B	(A + B)·(A·B)′	LDA RAND, CMA, AND ROR
+A NOR B	(A + B)′	LDA ROR, CMA
+
+A NAND B	(A·B)′	LDA RAND, CMA
+
+Program
+
+
+; ==============================================================
+; Practical 5 : Logical operations AND, OR, NOT, XOR, NOR, NAND
+; on two user-entered numbers A and B
+; Machine : BasicComputer.cpu (Mano's Basic Computer)
+;
+; The Basic Computer has only two logic instructions:
+; AND (memory-reference) AC <- AC ^ M[addr]
+; CMA (register-reference) AC <- AC'
+; AND + NOT is a functionally complete set, so every other
+; operation is built from them with Boolean algebra:
+; NAND = (A.B)'
+; OR = (A'.B')' (De Morgan)
+; NOR = (A + B)'
+; XOR = (A + B) . (A.B)'
+; Outputs appear in this order: AND, OR, NOT A, NOT B, XOR, NOR, NAND
+; ==============================================================
+ INP ; AC <- A
+ STA A
+ INP ; AC <- B
+ STA B
+; ---------- AND = A . B ----------------------------------------
+ LDA A ; AC <- A
+ AND B ; AC <- A . B
+ STA RAND
+ OUT ; output 1 : A AND B
+; ---------- OR = (A' . B')' ------------------------------------
+ LDA B
+ CMA ; AC <- B'
+ STA NB ; NB <- B'
+ LDA A
+ CMA ; AC <- A'
+ STA NA ; NA <- A'
+Computer System Architecture – CPU Sim Lab Manual
+Page 30
+ AND NB ; AC <- A' . B'
+ CMA ; AC <- (A' . B')' = A + B
+ STA ROR
+ OUT ; output 2 : A OR B
+; ---------- NOT A, NOT B ---------------------------------------
+ LDA NA
+ OUT ; output 3 : NOT A
+ LDA NB
+ OUT ; output 4 : NOT B
+; ---------- XOR = (A + B) . (A . B)' ---------------------------
+ LDA RAND
+ CMA ; AC <- (A . B)' = NAND
+ STA RNAND
+ AND ROR ; AC <- (A + B) . (A . B)'
+ STA RXOR
+ OUT ; output 5 : A XOR B
+; ---------- NOR = (A + B)' -------------------------------------
+ LDA ROR
+ CMA ; AC <- (A + B)'
+ STA RNOR
+ OUT ; output 6 : A NOR B
+; ---------- NAND = (A . B)' ------------------------------------
+ LDA RNAND
+ OUT ; output 7 : A NAND B
+ HLT
+A: .data 1 0
+B: .data 1 0
+NA: .data 1 0 ; A'
+NB: .data 1 0 ; B'
+RAND: .data 1 0 ; A AND B
+ROR: .data 1 0 ; A OR B
+RXOR: .data 1 0 ; A XOR B
+RNOR: .data 1 0 ; A NOR B
+RNAND: .data 1 0 ; A NAND B
+
+
+After assembling and loading the program
+
+
+<img width="872" height="538" alt="Screenshot 2026-10-04 134019" src="https://github.com/user-attachments/assets/a72f2446-c108-4d66-be76-4b3169b06d09" />
+
+
+Output after running the program and entering both numbers
+
+<img width="840" height="332" alt="Screenshot 2026-10-04 134116" src="https://github.com/user-attachments/assets/4648307b-03e9-4f9c-b9e5-01919d32c580" />
+
+
+Result
+
+
+The program runs and takes both inputs correctly and stores them, All six logical operations were simulated using only AND and CMA. For A = 12 and B = 10 the outputs are AND = 8, OR = 14, NOT A = −13, NOT B = −11, XOR = 6, NOR = −15, NAND = −9
+
+
+
+
+
 
 
 
