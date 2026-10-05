@@ -378,6 +378,118 @@ Result
 
 The program runs and takes both inputs correctly and stores them, All six logical operations were simulated using only AND and CMA. For A = 12 and B = 10 the outputs are AND = 8, OR = 14, NOT A = −13, NOT B = −11, XOR = 6, NOR = −15, NAND = −9
 
+Practical-6 Memory-reference Instructions: ADD, LDA, STA, BUN, ISZ
+
+Aim	To write an assembly program that simulates the memory-reference instructions ADD, LDA, STA, BUN and ISZ.
+
+Tool CPU Sim 4.0.11 (Java 8 with JavaFX)
+
+
+Theory 
+
+
+A memory-reference instruction has an opcode 0–6 and a 12-bit address. During fetch AR ← IR(0–11), so at T4 onwards AR holds the address of the operand (the effective address, since I = 0).
+
+
+Programme
+
+
+
+; ==============================================================
+; Practical 6 : Memory-reference instructions ADD, LDA, STA, BUN, ISZ
+; Machine : BasicComputer.cpu (Mano's Basic Computer)
+;
+; Task : multiply X by N using repeated addition.
+; PROD = X + X + ... + X (N times)
+; CTR holds -N; ISZ adds 1 to it on every pass and
+; skips the BUN when it reaches 0, ending the loop.
+; Data : X = 5, N = 3 (CTR = -3) -> PROD = 15
+; ==============================================================
+LOOP: LDA PROD ; AC <- M[PROD]
+ ADD X ; AC <- AC + M[X]
+ STA PROD ; M[PROD] <- AC
+ ISZ CTR ; M[CTR] <- M[CTR] + 1; skip next if it became 0
+ BUN LOOP ; PC <- LOOP (repeat)
+ LDA PROD ; AC <- final product
+ HLT
+X: .data 1 5 ; multiplicand
+CTR: .data 1 -3 ; -N (loop counter)
+PROD: .data 1 0 ; product
+
+After Assembling and loading the program
+
+<img width="809" height="492" alt="1000121734" src="https://github.com/user-attachments/assets/c0476b41-450e-4ad5-b009-a13131e76bd1" />
+
+After step 4 in debug mode:
+
+![1000121735](https://github.com/user-attachments/assets/3d26e96e-4d66-493f-b480-d5e9f33c2477)
+
+After step 5 
+
+<img width="822" height="564" alt="1000121736" src="https://github.com/user-attachments/assets/db18de08-217e-4e14-9f2b-56b0dd21c89e" />
+
+After step 14 
+
+<img width="784" height="625" alt="1000121737" src="https://github.com/user-attachments/assets/d95377af-6bee-4db5-8e3d-2f0e30a3a191" />
+
+After Step 16
+
+<img width="830" height="810" alt="1000121738" src="https://github.com/user-attachments/assets/6a39487a-612e-4e7f-a5b5-c2e0a794e154" />
+
+Result
+
+The memory-reference instructions were simulated: LDA, ADD and STA computed the running product, ISZ counted the passes and skipped the branch when the counter reached zero, and BUN formed the loop. Final AC = PROD = 15.
+
+Practical-7 Register-reference Instructions: CLA, CMA, CME, HLT
+
+Aim :- To simulate the register-reference instructions CLA, CMA, CME and HLT and determine AC, E, PC, AR and IR in decimal after execution.
+
+Tool :- CPU Sim 4.0.11 (Java 8 with JavaFX)
+
+Theory
+
+
+Register-reference instructions have the code 7xxx: opcode 111 with I = 0. The low 12 bits select one operation on AC or E, executed at T3, with no memory access. Because the fetch routine always performs AR ← IR(0–11), AR ends up holding the low 12 bits of the instruction code (for example 800 hex = 2048 for CLA).
+
+
+
+Programme 
+
+; ==============================================================
+; Practical 7 : Register-reference instructions CLA, CMA, CME, HLT
+; Machine : BasicComputer.cpu (Mano's Basic Computer)
+; Observe AC, E, PC, AR and IR (Decimal) after every instruction.
+; ==============================================================
+ LDA NUM ; set-up: AC <- 25 so that CLA has something to clear
+ CLA ; 7800 : AC <- 0
+ CMA ; 7200 : AC <- AC' (0000 -> FFFF = -1)
+ CME ; 7100 : E <- E' (0 -> 1)
+ HLT ; 7001 : S <- 1 (halt)
+NUM: .data 1 25
+
+After assembling and loading the program
+
+<img width="795" height="377" alt="1000121745" src="https://github.com/user-attachments/assets/b8ebf1d5-2e17-43be-be41-e20642c527b0" />
+
+After step 1:LDA NUM: AC = 25
+
+<img width="823" height="710" alt="1000121747" src="https://github.com/user-attachments/assets/f89ec106-655b-4558-b161-660a1e0b968c" />
+
+After step 2:CLA: AC = 0, AR = 2048 (800 hex
+
+<img width="829" height="767" alt="1000121748" src="https://github.com/user-attachments/assets/011ba4aa-c93f-4fb1-847d-59d882a0720b" />
+
+After step 3:CMA: AC = 65535 (FFFF hex = −1), AR = 512
+
+<img width="807" height="874" alt="1000121749" src="https://github.com/user-attachments/assets/58525cd1-1e8f-4847-9feb-e15d8aaecef0" />
+
+
+
+
+
+
+
+
 
 
 
