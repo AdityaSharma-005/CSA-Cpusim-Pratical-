@@ -626,6 +626,98 @@ Result
 <img width="868" height="342" alt="Screenshot 2026-10-11 111610" src="https://github.com/user-attachments/assets/722e164c-3125-41e7-9715-fd619c8ce0b9" />
 
 
+Practical 10: Sum of Integers until a Negative Number is Read
+
+
+Aim-> To write an assembly program that reads integers and adds them until a negative non-zero number is read, then outputs the sum (not including the last number). Tool-> CPU Sim 4.0.11 (Java 8 with JavaFX)
+
+Theory
+This is a sentinel-controlled loop: the negative number marks the end of the data. After each INP, SPA skips the exit branch when AC ≥ 0; for a negative number the skip does not happen and BUN DONE leaves the loop before the number is added. Zero counts as non-negative, so it is added (it does not change the sum).
+
+
+Programme
+
+; ==============================================================
+; Practical 10 : Read integers and add them until a negative
+; non-zero number is read; output the sum
+; (the negative number is NOT included).
+; Machine : BasicComputer.cpu (Mano's Basic Computer)
+; ==============================================================
+LOOP: INP ; AC <- next number
+ SPA ; if AC >= 0 skip the exit branch
+ BUN DONE ; AC < 0 : leave the loop
+ ADD SUM ; AC <- AC + SUM
+ STA SUM ; SUM <- AC
+ BUN LOOP ; read the next number
+DONE: LDA SUM ; AC <- SUM
+ OUT ; display the sum
+ HLT
+SUM: .data 1 0 ; running total
+
+After assembling and loading the programme 
+
+<img width="867" height="456" alt="Screenshot 2026-10-11 144502" src="https://github.com/user-attachments/assets/9351c959-3118-4da1-87eb-01e72e06436e" />
+
+Output after running the program and giving inputs 4, 10, 0, 6 and finally -3
+
+<img width="825" height="470" alt="Screenshot 2026-10-11 144607" src="https://github.com/user-attachments/assets/a4c69450-d80f-44d4-be91-78eedd4532ea" />
+
+Result
+The program successfully keeps running until a negative input is given, in the case above, The program adds integers until a negative number is read and displays the sum excluding it: 4 + 10 + 0 + 6 = 20.
+
+
+
+Practical 11: Sum of Integers until Zero is Read
+
+
+Aim-> To write an assembly program that reads integers and adds them until zero is read, then outputs the sum. Tool-> CPU Sim 4.0.11 (Java 8 with JavaFX)
+
+
+Theory
+
+
+Here the sentinel is 0. SZA skips the next instruction when AC = 0. Because a skip can only jump over one instruction, two branches are used: when AC ≠ 0 the BUN ADDIT executes and the number is added; when AC = 0 that branch is skipped and BUN DONE ends the loop. Negative numbers are added normally.
+
+
+Program
+; ==============================================================
+; Practical 11 : Read integers and add them until zero is read;
+; then output the sum.
+; Machine : BasicComputer.cpu (Mano's Basic Computer)
+; ==============================================================
+LOOP: INP ; AC <- next number
+ SZA ; if AC != 0 do not skip ...
+ BUN ADDIT ; ... so go and add it
+ BUN DONE ; AC = 0 (BUN ADDIT was skipped) : finish
+ADDIT: ADD SUM ; AC <- AC + SUM
+ STA SUM ; SUM <- AC
+ BUN LOOP ; read the next number
+DONE: LDA SUM ; AC <- SUM
+ OUT ; display the sum
+ HLT
+SUM: .data 1 0 ; running total
+
+
+After assembling and loading the programme
+
+
+<img width="842" height="397" alt="image" src="https://github.com/user-attachments/assets/9ab0a11c-276f-4869-9800-6f76c3c4598b" />
+
+
+Output after running the program and giving inputs 8, 12, -5 and finally 0
+
+
+
+<img width="860" height="537" alt="image" src="https://github.com/user-attachments/assets/855f9ea6-f8db-4f0f-92db-720c9b5753c7" />
+
+
+Result
+
+
+The program successfully keeps running until 0 is given as input, in the case above, The program adds integers until 0 is read and displays the sum: 8 + 12 + (−5) = 15.
+
+
+
 
 
 
